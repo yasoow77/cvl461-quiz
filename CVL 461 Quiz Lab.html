@@ -1,0 +1,372 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CVL 461 Quiz Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: one centred column (max 760px). Home = lecture cards in the lecture colours of the study PDF, then midterm cards. Quiz = one question per screen. */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --surface2:#eaeef5; --fg:#18202f; --muted:#5a6578; --line:#d6dce7;
+  --accent:#1d4ed8; --on-accent:#ffffff;
+  --good:#0f7a4d; --good-bg:#def5ea; --bad:#b42318; --bad-bg:#fde5e2; --warn:#8a5a00; --warn-bg:#fdf0cf;
+  --l1:#2563eb; --l2:#c2650a; --l3:#7c3aed; --l5:#0b8a5f; --l6:#d1322d; --mt:#18202f;
+  --display:"Space Grotesk","Inter",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#10141c; --surface:#19202c; --surface2:#232c3b; --fg:#e8ecf3; --muted:#9aa6ba; --line:#2f394a;
+  --accent:#7aa2ff; --on-accent:#0c1220;
+  --good:#5fd6a0; --good-bg:#12382a; --bad:#ff8f85; --bad-bg:#45191a; --warn:#f2c761; --warn-bg:#3d3013;
+  --l1:#6f9bff; --l2:#f0a04b; --l3:#b08cff; --l5:#4fd0a0; --l6:#ff7d76; --mt:#e8ecf3; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#10141c; --surface:#19202c; --surface2:#232c3b; --fg:#e8ecf3; --muted:#9aa6ba; --line:#2f394a;
+  --accent:#7aa2ff; --on-accent:#0c1220;
+  --good:#5fd6a0; --good-bg:#12382a; --bad:#ff8f85; --bad-bg:#45191a; --warn:#f2c761; --warn-bg:#3d3013;
+  --l1:#6f9bff; --l2:#f0a04b; --l3:#b08cff; --l5:#4fd0a0; --l6:#ff7d76; --mt:#e8ecf3; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.9rem;letter-spacing:-.02em} h2{font-size:1.15rem} h3{font-size:1.05rem}
+p{margin:0}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.head{display:flex;flex-direction:column;gap:6px;padding-top:8px}
+.group{display:flex;flex-direction:column;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{--c:var(--accent);text-align:left;background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card:hover{border-color:var(--c)}
+.card .tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.card .name{font-family:var(--display);font-weight:600;font-size:1.02rem;line-height:1.25}
+.card .meta{display:flex;justify-content:space-between;gap:8px;font-size:.82rem;color:var(--muted);margin-top:auto;padding-top:6px;font-variant-numeric:tabular-nums}
+.card .best{font-weight:600;color:var(--fg)}
+.opt-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:.9rem}
+.opt-row label{display:flex;gap:7px;align-items:center;cursor:pointer}
+.note{background:var(--surface2);border-radius:10px;padding:10px 12px;font-size:.86rem;color:var(--muted)}
+/* quiz */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .title{font-family:var(--display);font-weight:600;min-width:0;flex:1}
+.link{background:none;border:0;padding:6px 0;color:var(--accent);font-weight:600}
+.prog{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--c,var(--accent));border-radius:99px;transition:width .2s}
+@media (prefers-reduced-motion: reduce){.prog i{transition:none}}
+.count{font-size:.86rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.qmeta{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.pill.lec{background:transparent;border:1.5px solid var(--c);color:var(--c)}
+.qtext{font-size:1.08rem;font-weight:600;line-height:1.4}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:11px;align-items:flex-start;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;min-width:0}
+.opt:hover:not(:disabled){border-color:var(--muted)}
+.opt .box{flex:none;width:20px;height:20px;border:2px solid var(--muted);border-radius:5px;margin-top:2px;display:grid;place-items:center;font-size:13px;font-weight:700;line-height:1}
+.opt.round .box{border-radius:50%}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--surface2)}
+.opt[aria-checked="true"] .box{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.opt:disabled{cursor:default;color:inherit}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.right .box{background:var(--good);border-color:var(--good);color:var(--surface)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.wrong .box{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.opt.missed{border-color:var(--good);border-style:dashed}
+.opt .why{margin-left:auto;font-size:.72rem;font-weight:700;white-space:nowrap;padding-left:8px}
+.opt.right .why,.opt.missed .why{color:var(--good)} .opt.wrong .why{color:var(--bad)}
+.fb{border-radius:10px;padding:11px 13px;font-size:.93rem}
+.fb.ok{background:var(--good-bg);color:var(--good)} .fb.no{background:var(--bad-bg);color:var(--bad)}
+.fb b{display:block} .fb span{color:var(--fg)}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 18px;font-weight:600}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.spacer{flex:1}
+/* results */
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.score .n{font-family:var(--display);font-size:3rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 90px 52px;gap:10px;align-items:center;font-size:.88rem}
+.row .prog{height:6px}.row .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.rev{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:.93rem}
+.rev.ok{border-left-color:var(--good)}
+.rev .q{font-weight:600}
+.rev .a b{color:var(--good)} .rev .y b{color:var(--bad)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+summary{cursor:pointer;font-weight:600;line-height:1.4}
+details .ans{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);white-space:pre-line;font-size:.95rem}
+details .hint{font-size:.8rem;color:var(--accent);font-weight:600;margin-top:6px;display:block}
+details[open] .hint{display:none}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+/* ---------- question bank ---------- */
+const LEC={
+  L1:{n:"Lecture 1",t:"Introduction to Smart Cities",c:"--l1"},
+  L2:{n:"Lecture 2",t:"Smart Construction, Infrastructure Management & Monitoring",c:"--l2"},
+  L3:{n:"Lecture 3",t:"Smart Urban Infrastructures & Smart Cities",c:"--l3"},
+  L5:{n:"Lecture 5",t:"Smart Urban Energy Systems",c:"--l5"},
+  L6:{n:"Lecture 6",t:"Smart Urban Transportation Systems",c:"--l6"}
+};
+// [lecture, source, question, options, correct indexes, explanation]
+const RAW=[
+/* ===== Lecture 1 (extra practice) ===== */
+["L1","Extra","Roughly how many people live in urban areas today?",["1.2 billion (about 20% of the world)","3.9 billion (over 54% of the world)","6.0 billion (about 75% of the world)","7.5 billion (about 90% of the world)"],[1],"Over 3.9 billion people, more than 54% of the world population."],
+["L1","Extra","The urban population is expected to reach what figure by 2045?",["4.5 billion","5.0 billion","6.0 billion","9.0 billion"],[2],"The lecture gives 6.0 billion by 2045."],
+["L1","Extra","Which statements about cities are correct?",["Cities generate more than 80% of global greenhouse gas emissions","Cities generate 75% of waste","Cities account for 70% of global energy use","Cities account for only 25% of global energy use"],[0,1,2],">80% of GHG emissions, 75% of waste and 70% of energy use."],
+["L1","Extra","Under the digital paradigm shift, urban systems must become:",["Sustainable","Inclusive","Reliable","Efficient","Centralized"],[0,1,2,3],"Sustainable, inclusive, reliable and efficient."],
+["L1","Extra","Which definition of sustainability matches the lecture?",["Maximizing economic growth in the present generation","Meeting the needs of the present without compromising the ability of future generations to meet their own needs","Replacing all fossil fuels with renewable energy","Reducing the population of cities"],[1],"This is the definition used in the lecture."],
+["L1","Extra","What are the three pillars of sustainability?",["Environment","Economy","Society","Technology","Politics"],[0,1,2],"Environment, economy and society, considered together."],
+["L1","Extra","Which pillar of sustainability covers quality of life, equity, health, safety and accessibility?",["Environment","Economy","Society"],[2],"The society pillar is about people and community well-being."],
+["L1","Extra","How many Sustainable Development Goals (SDGs) did the UN establish?",["7","11","13","17"],[3],"There are 17 SDGs."],
+["L1","Extra","Which SDGs are most directly linked to smart cities in the lecture?",["SDG 7 – Affordable and Clean Energy","SDG 9 – Industry, Innovation and Infrastructure","SDG 11 – Sustainable Cities and Communities","SDG 13 – Climate Action","SDG 14 – Life Below Water"],[0,1,2,3],"SDGs 7, 9, 11 and 13."],
+["L1","Extra","What is SDG 11?",["Climate Action","Sustainable Cities and Communities","Affordable and Clean Energy","Industry, Innovation and Infrastructure"],[1],"SDG 11 is Sustainable Cities and Communities."],
+["L1","Extra","Urbanization increases the demand for which of the following?",["Energy","Mobility","Water","Urban services","Agricultural land inside cities"],[0,1,2,3],"The lecture lists energy, mobility, water and urban services."],
+["L1","Extra","Which pillar of sustainability includes efficient resource use, innovation and employment?",["Environment","Economy","Society"],[1],"Economic viability, efficient resource use, innovation and employment belong to the economy pillar."],
+
+/* ===== Lecture 2 – Sheet 1 ===== */
+["L2","Sheet 1","What is the definition of Smart Construction?",["Using digital tools only after project completion.","The use of sensors, data, and digital tools throughout the construction lifecycle.","Relying exclusively on manual inspections and paper drawings.","Replacing human labor with fully autonomous site robotics only."],[1],"Smart construction covers the whole lifecycle, not just the finished project."],
+["L2","Sheet 1","In smart construction equipment, how is a \"Smart Product\" defined?",["The remote support and maintenance alerts layer provided by equipment dealers.","The cloud integration connecting multiple machines across the site.","The physical machine itself embedded with smart technology like sensors, GPS, and semi-autonomous features.","The central dashboard used by project managers."],[2],"Smart Product = the machine. Option 1 describes Smart Service, option 2 Smart Solution."],
+["L2","Sheet 1","Which smart construction layer provides site-wide data integration from sources like drones and cloud connectivity for site optimization?",["Smart Product","Smart Service","Smart Solution","Smart Component"],[2],"Smart Solution is the site-wide systems level."],
+["L2","Sheet 1","How does a BIM model differ fundamentally from a traditional 2D CAD drawing?",["BIM consists only of flat lines, dimensions, and hatching.","BIM is an information-rich, 3D intelligent model combining geometry with coordinated data across disciplines.","CAD models automatically update across all disciplines when changes occur.","CAD contains asset lifecycle and maintenance schedule data."],[1],"BIM = geometry + data. Flat lines and hatching describe CAD."],
+["L2","Sheet 1","Which BIM dimension links the 3D geometry model to the construction schedule for time simulation?",["3D","4D","5D","6D"],[1],"4D = time / schedule."],
+["L2","Sheet 1","What does 5D BIM add on top of the 4D schedule model?",["Facility management and maintenance schedules","Energy consumption and environmental sustainability analysis","Real-time budget and cost data tracking","Spatial geometry and clash detection"],[2],"5D = cost."],
+["L2","Sheet 1","Which BIM dimensions represent Sustainability/Energy performance and Facility Management, respectively?",["4D and 5D","5D and 6D","6D and 7D","3D and 7D"],[2],"6D = sustainability/energy, 7D = facility management."],
+["L2","Sheet 1","In Europe's Crossrail project, how were 4D and 5D BIM utilized?",["To monitor worker heart rates on-site.","To manage scheduling, MEP installation progress, and costs at a massive infrastructure scale.","To replace physical tunnel excavation with virtual models.","To perform real-time structural health monitoring on sea bridges."],[1],"Crossrail used 4D/5D BIM for scheduling and cost."],
+["L2","Sheet 1","Which Computer Vision model scans images in real time to detect and locate defects such as cracks with 96%+ accuracy?",["AutoCAD","eQUEST","YOLO (\"You Only Look Once\")","Revit"],[2],"YOLO scans an image once to detect and locate objects."],
+["L2","Sheet 1","What is a key benefit of AI-powered image analysis for defect detection during construction?",["It replaces the need for structural engineers during design.","It catches defects and cracks early before costly rework occurs after concrete cures or structures are enclosed.","It eliminates the need for 3D BIM models.","It lowers the energy consumption of heavy machinery."],[1],"Early detection avoids costly rework."],
+["L2","Sheet 1","What technology does Doxel use to track progress and compare the site against BIM models?",["Smart helmets and wearable RTLS tags","AI-equipped drones and rovers daily scanning the site","Fiber-optic sensors embedded inside concrete","Fiber-optic piezometers and tiltmeters"],[1],"Doxel uses AI-equipped drones and rovers."],
+["L2","Sheet 1","What is Structural Health Monitoring (SHM)?",["Periodic manual inspection of building facades using physical ladders.","Continuous sensor-based tracking of structural strain, vibration, and displacement to identify instability or degradation.","Measuring daily attendance and productivity of site workers.","Simulating building energy performance prior to construction."],[1],"SHM is continuous and sensor-based."],
+["L2","Sheet 1","When does Structural Health Monitoring typically begin?",["Only after a structural failure or major crack appears.","During construction when sensors are embedded, continuing as handover into the infrastructure management phase.","Exclusively during the 2D CAD design phase.","After 50 years of asset operational life."],[1],"Sensors are embedded during construction, so monitoring starts at opening."],
+["L2","Sheet 1","In the Hong Kong–Zhuhai–Macau Bridge case, what sensor network monitors strain, ship-impact risk and seismic response?",["A network of over 1,500 fiber-optic and accelerometer sensors.","Doxel daily rover scanning.","Wearable smart vests and WakeCap helmets.","2D AutoCAD floor plan tracking."],[0],"Over 1,500 fiber-optic and accelerometer sensors for a 120-year service life."],
+["L2","Sheet 1","Which safety technology tracks worker location, attendance and ambient conditions in real time (Opera Grand Tower case)?",["Wearables (e.g., WakeCap smart helmets & vests)","Pneumatic waste pipes","6D BIM models","Ultrasonic concrete testing"],[0],"WakeCap wearables were used at Opera Grand Tower, Dubai."],
+["L2","Sheet 1","What is the role of Centralized Safety Dashboards on a construction site?",["To generate automatic 2D CAD floor plans.","To aggregate live data from wearables, drones, and site sensors into a single view for site managers.","To eliminate project schedules and budget estimates.","To calculate 6D energy consumption metrics."],[1],"One live view of all safety data."],
+["L2","Sheet 1","How does Smart Construction transition into long-term infrastructure monitoring at the \"Handover Moment\"?",["Smart technologies are completely removed once construction ends.","Embedded structural sensors continue tracking physical assets into their operational life, shifting defect detection into predictive maintenance.","Safety monitoring stops entirely as public usage begins.","Construction contractors permanently manage public municipal transit."],[1],"Monitoring begins when construction ends."],
+["L2","Sheet 1","Mega-projects in Egypt such as the New Administrative Capital and New Alamein demonstrate a shift toward:",["Abandoning BIM in favor of hand-drawn paper blueprints.","Rapid BIM adoption and embedding digital infrastructure into projects from day one.","Postponing smart monitoring until 20 years after building completion.","Relying solely on traditional, non-connected construction practices."],[1],"Rapid BIM adoption and smart monitoring built in from day one."],
+["L2","Sheet 1","Which safety technology gives supervisors real-time location tracking and proximity alerts near hazards?",["5D BIM Software","Wearable RTLS tags and Smart Helmets","Piezometer sensors","Ultrasonic crack detectors"],[1],"Real-time location systems (RTLS) and geofencing."],
+["L2","Extra","What results did Doxel report on its projects?",["38% productivity increase and 11% under budget","11% productivity increase and 38% under budget","96% productivity increase","A 120-year service life"],[0],"38% productivity increase and 11% under budget."],
+["L2","Extra","Which facts about London Crossrail (Elizabeth Line) are correct?",["It is a 118 km railway","It includes 42 km of new tunnels","It was built between 2009 and 2022","It is a 55 km sea crossing"],[0,1,2],"The 55 km sea crossing is the Hong Kong–Zhuhai–Macau Bridge."],
+["L2","Extra","A dealer's system warns a site manager two weeks before a hydraulic pump fails. Which layer is this?",["Smart Product","Smart Service","Smart Solution"],[1],"Predictive maintenance alerts are part of Smart Service."],
+["L2","Extra","Which physical quantities does SHM detect, according to its definition?",["Strain","Vibration","Displacement","Worker attendance"],[0,1,2],"Strain, vibration and displacement."],
+
+/* ===== Lecture 3 – Sheet 2 ===== */
+["L3","Sheet 2","Cities can be studied from different perspectives, and as different types of systems, which can be...",["Economic systems","Technical systems","Demographic systems","Political systems","Social systems"],[0,1,3,4],"The four views are technological, economic, political and social."],
+["L3","Sheet 2","What are the main layers used to conceptualize urban systems?",["Infrastructure layer","Economic layer","Service layer","Green layer","Institutional layer"],[0,2],"Traditionally two layers: infrastructure and services."],
+["L3","Sheet 2","What are the three key metrics used to characterize the performance of urban infrastructure systems?",["Quality of life","Efficiency","Resilience","Sustainability","Growth","Investments"],[1,2,3],"Efficiency, resilience and sustainability."],
+["L3","Sheet 2","How does the conceptualization of smart cities differ from the traditional conceptualization of urban systems?",["By the use of electric vehicles","By the addition of a data layer","Through the merging of the infrastructure and service layers","By the addition of a citizen layer"],[1],"A digital/data layer is added between infrastructure and services."],
+["L3","Sheet 2","Which of the following components enable the development of the data layer for Smart Cities?",["The internet","Telecommunications infrastructure","The World Wide Web","Social networks"],[0,1,2],"Telecom infrastructure, networks (the Internet) and identification/exchange of data (the WWW)."],
+["L3","Sheet 2","Which definition best describes digitalization?",["The process of using the outputs of a component of a system to influence the inputs of the same component.","The interconnection of computers and other digital devices through the internet.","The integration of Information and Communication Technologies (ICTs) into most aspects of everyday life through the use of new and legacy telecommunication infrastructures and networks."],[2],"Option 1 describes a feedback loop."],
+["L3","Sheet 2","Which option best describes how digitalization is being used to improve value chains?",["Value chains can be closely monitored by customers and managers by being mirrored in the digital layer.","Value chains can be eliminated through the substitution of human labor with digital technologies.","Value chains can become more efficient by reducing the number of services offered in the physical layer."],[0],"The physical value chain is mirrored in the digital layer and optimized."],
+["L3","Sheet 2","Which of the following options are NOT examples of digitalization?",["Smart energy meters","Smart lighting","Traffic surveillance systems","Electric vehicles","Wind turbines"],[3,4],"EVs and wind turbines are energy technologies, not ICT integration."],
+["L3","Sheet 2","What are the two main visions for implementing a Smart City?",["Users as leaders: citizens lead and govern the transition using digital tools.","Users as citizens: the public sector leads the transition, and the city is built to serve the citizens.","Users as consumers: vendors lead the transition, and the smart city is built to increase profits."],[1,2],"City perspective (citizens) versus vendor perspective (consumers)."],
+["L3","Sheet 2","A Socio-Technical system can be defined as:",["A system in which people and technology, including infrastructures, interact in a reciprocal relationship within an environment.","A system in which individuals only interact with each other and have no impact on technological components.","A system in which individuals and technology interact with one another but does not have boundaries nor relation to its environment."],[0],"Mutual influence between infrastructure and human systems."],
+["L3","Sheet 2","Which smart city vision relies on a technology-push approach?",["The Vendor Vision","The Non-Governmental Organization Vision","The City Government Vision","The Citizen Vision"],[0],"Vendors push technology; cities follow demand-pull."],
+["L3","Sheet 2","True or false: value chain information mirrored in the data layer can be used to improve the layer or create new services and business models, allowing companies to find new ways to profit.",["True","False"],[0],"This is the 'new business models' benefit of digitalization."],
+["L3","Sheet 2","Smart cities can be seen from a...",["Political perspective","Technological perspective","Social perspective","Economic perspective"],[0,1,2,3],"All four perspectives apply."],
+["L3","Sheet 2","How does digitalization affect non-scalable industries, such as the taxi industry?",["It turns consumers into prosumers","It allows them to start scaling up","It allows them to develop new business models on which to capitalize"],[1],"Platforms like e-hailing let a local, non-scalable service scale. This one is not stated word for word in the slides, so confirm it with your instructor."],
+["L3","Sheet 2","Which statement is more accurate about the impact of digitalization on the management of cities as socio-technical systems?",["It enables cities to cope with the high complexity and interdependency that characterize urban systems.","It enables urban dwellers and citizens to connect with one another and develop social activities.","It allows public authorities to closely monitor and control the activity of all citizens."],[0],"Digitalization helps manage complexity and interdependency."],
+["L3","Sheet 2","Which statement correctly reflects the implications of complex feedback loops in urban systems?",["They make urban management easier by reducing uncertainty in city operations.","They enable cities to remain static and predictable in response to changes.","They contribute to cities being highly dynamic and path-dependent, complicating management and governance.","They isolate technical systems from social and economic interactions, simplifying planning."],[2],"Cities are unpredictable and path-dependent, so they need holistic, adaptive strategies."],
+["L3","Sheet 2","Which statement best captures one of the key tensions in Smart City development?",["Vendors prioritize citizen needs above commercial interests.","Cities view people primarily as consumers to sell services to.","The leadership in Smart Cities is often a balance between commercial vendors and citizen-focused governance.","Tech-push strategies are always aligned with citizen priorities."],[2],"The leadership tension: vendors or cities?"],
+["L3","Sheet 2","Which role is typically associated with infrastructure companies in smart city development?",["Providing data analytics and dashboards","Supplying smart devices and sensors","Operating in urban sectors and integrating data services","Managing social media platforms"],[2],"Infrastructure companies (e.g., Siemens, Schneider Electric) operate urban sectors and add data layers."],
+["L3","Midterm 2025","What are the five dimensions that must be considered when transitioning to smart cities?",["Political","Technological","International","Economic","Social","Environmental"],[0,1,3,4,5],"Official answer: political, technological, economic, social and environmental."],
+["L3","Midterm 2025","Which option best describes the main consequence of digitalization?",["The rapid decrease of the number of connected devices","Rapid development in the capacity to analyze and visualize data","An increase in household bandwidth"],[1],"Official answer: rapid development in the capacity to analyze and visualize data."],
+["L3","Midterm 2025","Which of the following are examples of urban subsystems in which a smart city transition could also be implemented?",["Housing","Green infrastructures","Topography","Eco-Tourism","Water and waste"],[0,1,4],"Official answer: housing, green infrastructures, water and waste."],
+["L3","Midterm 2025","What are examples of technologies used to analyze \"Big Data\"?",["Machine learning","Smart phones","Internet of Things","Artificial intelligence"],[0,3],"Machine learning and AI analyze data; phones and IoT generate it."],
+["L3","Midterm 2025","Which of the following are examples of data generating devices?",["Sensors","GPS","Smart phones","Servers","Cameras"],[0,1,2,4],"Servers store data; they don't generate it."],
+["L3","Extra","In the four-perspectives slide, which city is the example for the economic system view?",["Singapore","Dubai","Washington, D.C.","Vienna"],[1],"Singapore = technological, Dubai = economic, Washington = political, Vienna = social."],
+["L3","Extra","What are the four key components of digitalization?",["Data generation and storage","Communications and networks","Internet of Things (IoT)","Data analytics","Electric mobility"],[0,1,2,3],"The four components from the lecture."],
+["L3","Extra","Which pairs of vendor type and example are correct?",["Infrastructure companies – Siemens, Schneider Electric","IT service vendors – IBM, Cisco","Hardware vendors – smart meters, sensors, cameras","IT service vendors – Siemens"],[0,1,2],"Siemens is an infrastructure company."],
+["L3","Extra","\"Past decisions influence future outcomes\" describes which feedback loop?",["Path dependency","Social influence","Technical feedback","Economic impact"],[0],"That is path dependency."],
+["L3","Extra","Citizens interact mainly with which layer?",["The infrastructure layer","The service layer","Neither layer"],[1],"A road is infrastructure; transportation is the service the citizen uses."],
+
+/* ===== Lecture 5 – Sheet 3 ===== */
+["L5","Sheet 3","What are the three main drivers of the transition towards smart urban energy systems?",["Decentralized generation","Low electricity costs","Climate change","Digitalization"],[0,2,3],"Evolving infrastructure technologies (decentralized generation), climate change and digitalization."],
+["L5","Sheet 3","What percentage of global primary energy is consumed in cities?",["95%","55%","75%","25%"],[2],"75%."],
+["L5","Sheet 3","Which key elements drive the smart urban energy transition?",["Alternative urban energy sources","Energy efficiency","Off and semi-off grid operations","New storage technologies","Automated self-driving vehicles"],[0,1,2,3],"The four contextual changes in the infrastructure layer."],
+["L5","Sheet 3","Which actor is NOT involved in the operation of smart urban energy systems?",["Electricity generators","Distribution system operators","Electric vehicle manufacturers","Transmission systems operators","Utilities"],[2],"EV manufacturers are not on the list of actors."],
+["L5","Sheet 3","Which option best defines price signals?",["The information given to consumers through pricing that signals shifts in supply and demand","The information given to consumers through pricing that signals a change in electricity sources","The information given to consumers through pricing that signals shifts in electricity providers"],[0],"Dynamic prices reflect supply and demand."],
+["L5","Sheet 3","Which actor is the LEAST involved in the management of smart urban energy systems?",["Engineering companies active in construction of power plants","Storage operators","Prosumers","Distributors","Decentralized electricity producers"],[0],"The other four are named actors of the infrastructure layer."],
+["L5","Sheet 3","Who are the main smart energy service customers?",["Buildings","Households","Commerce & industry","Distribution and transmission operators"],[0,1,2,3],"All four customer types."],
+["L5","Sheet 3","Which option best describes smart energy balancing?",["The use of ICTs to optimize the balancing of supply and demand, almost in real time","The use of ICTs to improve the monthly balance of energy consumed by households and buildings","The use of ICTs to improve the energy efficiency of households and buildings"],[0],"Balancing matches supply and demand to keep the grid stable."],
+["L5","Sheet 3","Who are the customers of demand side management services?",["Distribution operators","Households","Buildings","Commerce & industry"],[1,2,3],"DSM helps households, buildings and commercial users optimize consumption."],
+["L5","Sheet 3","Which of the following is a target customer for smart balancing services?",["Buildings","Households","Industries","Distribution operators"],[3],"Balancing services are for grid operators."],
+["L5","Sheet 3","What are the three main kinds of smart urban energy services?",["Smart and integrated energy services","Smart balancing","Contract enforcement","Demand side management"],[0,1,3],"Balancing, DSM and integrated smart urban energy services."],
+["L5","Sheet 3","Which of the following is NOT an example of smart and integrated energy services?",["Using the data layer to provide services that enhance electric mobility","Using the data layer to help manage energy use in water distribution systems","Using the data layer to optimize the energy consumption of waste recycling facilities","Using the data layer to facilitate the installation of solar panels and other generation technologies in households"],[3],"Integrated services link electricity with other infrastructures (transport, water, waste)."],
+["L5","Midterm 2025","Which two options best describe the different views of the smart energy data layer?",["Public Data View: data is only provided and managed by the public sector.","Decentralized view: data is provided by the most powerful actors across all layers of energy systems.","Integrated View: held by electricity utilities that have generation data and want to provide services based on it. Data is considered a good.","Data Platform View: data is fed by generators and then used by service providers to develop different services for different customers."],[2,3],"Official answer: Integrated View and Data Platform View."],
+["L5","Midterm 2025","What are the three kinds of data that can be generated by smart energy systems?",["Grid behavior","Bandwidth consumption","User behavior","Generator data"],[0,2,3],"User behavior, generator behavior and grid behavior."],
+["L5","Midterm 2025","Which of the following best describes Off-Grid and Semi-Off-Grid Operations?",["Power systems that rely entirely on fossil fuels and are disconnected from the grid","Centralized power systems that supply electricity to multiple cities through national grids","Households and industries that generate, store, and feed electricity back into the grid using solutions like solar panels and batteries","Systems that only store electricity for backup without generating or interacting with the main grid"],[2],"Official answer: generate, store and feed back."],
+["L5","Midterm 2025","Which of the following best defines a prosumer?",["A consumer whose demand is uncertain and calculated using probabilities","An individual who is also a professional in the energy sector","An individual that both consumes and generates electricity"],[2],"Prosumer = producer + consumer."],
+["L5","Midterm 2025","Which statement best describes the role of Peer-to-Peer (P2P) Operators?",["They are traditional utility companies responsible for electricity distribution and EV charging services.","They offer integrated services across different urban infrastructures like water and transport.","They manage digital platforms that allow prosumers to sell excess energy directly to other users, bypassing intermediaries.","They are new entrants like telecom operators that provide DSM services using consumption data."],[2],"The other options describe utilities, non-electricity providers and intermediaries."],
+["L5","Extra","Which words describe the smart energy system rather than the traditional one?",["Decentralized","Flexible","Dynamic","Two-way","Static"],[0,1,2,3],"Traditional = centralized, limited, static, one-way."],
+["L5","Extra","What are the three major dynamics transforming the traditional energy model?",["Centralized to decentralized generation","Stable to intermittent generation","Fixed to dynamic price signals","Public to private ownership"],[0,1,2],"These three were also a written question in the 2025 midterm."],
+["L5","Extra","Which are goals of Vienna's smart energy strategy?",["80% CO₂ reduction by 2050","50% of energy from renewables by 2030","1% annual per-capita reduction in building energy use","100% nuclear power by 2030"],[0,1,2],"The three Vienna goals from the case study."],
+["L5","Extra","In Vienna's Citizen Solar Power Plants project, citizens:",["Install panels on their own roofs for free","Invest in solar panels on city-run plants and receive annual returns","Buy electricity only at night","Sell their batteries to the city"],[1],"Over 15 plants, 100% sold out in 24 hours."],
+["L5","Extra","New entrants such as device manufacturers and telecom operators that use consumption data for DSM and balancing are called:",["Urban utilities","Intermediaries","Non-electricity providers","Peer-to-peer operators"],[1],"Intermediaries have no infrastructure experience but create new business models from data."],
+["L5","Extra","A city-level Tesla Megapack is an example of which actor's asset?",["Prosumers","Traders","Storage operators (centralized storage)","Transmission operators"],[2],"Storage operators manage decentralized (EV batteries) and centralized storage."],
+
+/* ===== Lecture 6 – Sheet 4 ===== */
+["L6","Sheet 4","Which of the following statements is more accurate?",["Transportation in cities has become more and more efficient since the introduction of cars.","Urban transportation quickly became more efficient with the introduction of cars but has stabilized over the past decades.","First, cars made transportation in cities more efficient. But eventually they became counterproductive and lowered efficiencies."],[2],"Cars raised efficiency, then congestion lowered it."],
+["L6","Sheet 4","What percentage of global CO₂ emissions originates from the urban transportation sector?",["15 to 20%","0 to 5%","25 to 30%"],[0],"About 15–20%."],
+["L6","Sheet 4","Digitalization is leading transportation systems to a change in paradigm characterized by a shift...",["from car ownership to mobility usership & from fossil fuel vehicles to electric vehicles.","from car ownership to mobility usership & from transportation to mobility.","from transportation to mobility & from bicycles to segways."],[1],"Ownership → usership, and separate transport systems → integrated mobility services."],
+["L6","Sheet 4","What are the two pathways of transition towards smart urban transportation systems?",["Improve pathway","Rebuild pathway","Shift pathway","Disrupt pathway"],[0,2],"Improve and Shift."],
+["L6","Sheet 4","What are the two main trends under the improve pathway?",["The use of electric buses","Monitoring of urban transport infrastructures thanks to ITS","The development of Mobility as a Service (MaaS)","The introduction of self-driving vehicles"],[1,3],"ICT monitoring and automated vehicles. MaaS belongs to the shift pathway."],
+["L6","Sheet 4","Which option describes Level 2 of vehicle automation (U.S. DOT)?",["Conditional automation (the automated system drives, but the driver is expected to respond when needed).","At least two driving assistant systems are present (e.g. cruise control and brake assistance).","One driver assistant system is present (e.g. braking assistance)."],[1],"Level 1 = one system, Level 2 = at least two, Level 3 = conditional automation."],
+["L6","Sheet 4","What are two new communication processes needed for the successful introduction of automated vehicles?",["V2I – vehicles communicate with surrounding infrastructures.","V2CM – vehicles communicate with car manufacturers.","V2G – vehicles communicate with government authorities.","V2V – vehicles communicate with surrounding vehicles."],[0,3],"V2V and V2I."],
+["L6","Sheet 4","Which of the following are key challenges in the service layer for automated vehicles?",["Institutional changes (driving codes, licenses...)","Social acceptance of the new technologies","Accountability: in case of accidents, who will be held responsible?","Integration of the data infrastructures with the legacy transport infrastructures"],[0,1,2],"Integration with legacy infrastructure is an infrastructure-layer challenge."],
+["L6","Sheet 4","Which options are examples of mobility services that rely on sharing economy processes?",["Car sharing","E-Hailing","Motorcycle taxis","Car pooling"],[0,1,3],"Car sharing, carpooling and e-hailing."],
+["L6","Sheet 4","Which statement about Mobility-as-a-Service (MaaS) and Integrated Mobility Platforms (IMP) is correct?",["MaaS relies on Pay-as-you-go, whereas IMP relies on periodical subscription packages and service-level agreements.","MaaS relies on periodical subscription mobility packages and service-level agreements, whereas an IMP relies on Pay-as-you-go.","MaaS and IMP are the same thing, named differently based on the context."],[1],"MaaS bundles services into monthly packages like phone plans."],
+["L6","Sheet 4","Which of the following is NOT an example of an emerging business model in the mobility sector?",["Selling vehicles to the final customer","Pay-as-you-use","Intermediation platforms","Data-centric"],[0],"Selling vehicles is the traditional ownership model."],
+["L6","Sheet 4","Which type of technology is specifically mentioned as an example used for ICT monitoring of urban transport infrastructure?",["Self-driving buses","Loop detectors, cameras, and sensors","Blockchain ledgers","Satellite phone communication"],[1],"Cameras, speed cameras and traffic sensors (infrared, laser, RFID)."],
+["L6","Midterm 2025","In the context of automated vehicles, which scenario is the most likely to occur in urban transportation systems?",["Automated vehicles will compete against public transportation systems and offer users door to door services.","Public transportation will remain the backbone of urban transportation systems, and the last and first miles might be operated by automated vehicles.","A combination of the other two scenarios is most likely."],[2],"Official answer: a combination of both."],
+["L6","Midterm 2025","What are the three drivers of the transition towards smart mobility systems?",["Globalization","Climate change","Digitalization","Urbanization"],[1,2,3],"Urbanization, digitalization and climate change."],
+["L6","Midterm 2025","Under the improve pathway, what is the main challenge for the infrastructure layer?",["The integration of the new data infrastructure into the legacy infrastructures","Developing new infrastructure","System optimization","Ensuring data security"],[0],"Official answer: integrating data infrastructure with legacy infrastructure."],
+["L6","Midterm 2025","What are examples of transportation schemes that enable the shift pathway?",["Integrated mobility platforms","Mobility-as-a-Service (MaaS)","Integrated ticketing systems (smart cards)","The use of segways"],[0,1,2],"The three integration schemes."],
+["L6","Midterm 2025","Which of the following best describes a key characteristic of E-Hailing Services?",["Users rent shared cars for a full day using public kiosks and return them to designated locations.","Users input their trip destination to find others traveling the same route for carpooling.","Users request rides from any location using smartphones through a digital platform.","Users pay a subscription fee to access electric scooters provided by city municipalities."],[2],"E-hailing = request a ride anywhere by smartphone."],
+["L6","Extra","At which automation level is there no steering wheel or pedals?",["Level 3","Level 4","Level 5"],[2],"Level 5 = full automation."],
+["L6","Extra","What separates Level 4 from Level 3?",["At Level 4 the driver is not required to respond; the system can stop safely itself","At Level 4 only one assistance system is active","At Level 4 the car has no steering wheel","There is no difference"],[0],"At Level 3 the driver may still need to intervene."],
+["L6","Extra","The T-money card in Seoul is an example of:",["Integrated ticketing","Mobility as a Service","Car sharing","V2I communication"],[0],"One card for buses, metro, trains and taxis."],
+["L6","Extra","Which statements about Singapore's smart mobility are correct?",["The Land Transport Authority (LTA) leads it","It uses EZ-Link ticketing and the MyTransport.SG app","Autonomous vehicles are tested in designated areas such as one-north","Its vision is a car-heavy city built around private cars"],[0,1,2],"The vision is a car-lite, commuter-centric city."],
+["L6","Extra","Under the shift pathway, what is the key challenge in the infrastructure layer?",["Financing","Social acceptance","Accountability","Data interoperability"],[0],"Many systems depend on public authorities, so new financing mechanisms are needed. Interoperability is the data-layer challenge."],
+["L6","Extra","Which technology do most new mobility services (car sharing, carpooling, e-hailing) depend on?",["Geo-localization","Blockchain","Fiber-optic strain sensors","Pumped storage"],[0],"ICT, especially geo-localization."]
+];
+const BANK=RAW.map((r,i)=>({id:i,lec:r[0],src:r[1],q:r[2],o:r[3],a:r[4],e:r[5]}));
+const WRITTEN=[
+["Explain the key difference between the vendor's perspective and the city's perspective in the development of smart cities.","Vendors focus on the digital data layer and market-driven infrastructure integration, offering services built on existing systems.\n\nCities emphasize managing infrastructures and delivering public services that meet citizens' needs, with a focus on public interest."],
+["Smart urban energy systems are being transformed by three major dynamics. (a) Identify them. (b) Give one example for each.","1. Stable to intermittent generation: solar panels and wind turbines produce electricity based on sunlight and wind, which are not constant.\n\n2. Fixed to dynamic price signals: a smart washing machine delays its operation until electricity prices drop.\n\n3. Centralized to decentralized generation: a factory generates electricity with rooftop solar panels and feeds surplus back into the grid (two-way flow)."],
+["What is the purpose of Demand-Side Management (DSM) services, and how do they benefit households and commercial users?","DSM services help households, buildings and commercial users optimize their energy consumption, particularly in response to price signals."],
+["Briefly describe the levels of vehicle automation defined by the U.S. Department of Transportation, with one example each.","Level 0 – No automation: the driver is fully responsible.\nLevel 1 – Driver assistance: one system active (e.g., braking assistance for a sudden stop or a pedestrian).\nLevel 2 – Combined assistance: at least two systems (e.g., braking assistance plus cruise control that keeps a safe distance).\nLevel 3 – Conditional automation: the system drives but the driver may need to intervene; only in specific conditions (highways, clear weather).\nLevel 4 – High automation: the driver is not required to respond; the system can stop safely.\nLevel 5 – Full automation: no human control, no steering wheel or pedals."],
+["Explain how ICT is used to monitor urban transport infrastructure, and name at least two technologies involved.","Infrastructure is equipped with data-gathering tools such as video cameras, speed cameras and traffic sensors (infrared, laser, RFID), which enable real-time observation and analysis.\n\nWired and wireless communication networks transmit the data, improving connectivity and system responsiveness."]
+];
+
+/* ---------- helpers ---------- */
+const $=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const app=document.getElementById("app");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={get(){try{return JSON.parse(localStorage.getItem("cvl461")||"{}")}catch(e){return{}}},set(v){try{localStorage.setItem("cvl461",JSON.stringify(v))}catch(e){}}};
+let prefs=Object.assign({shuffle:true,best:{}},store.get());
+const same=(a,b)=>a.length===b.length&&a.slice().sort().join()===b.slice().sort().join();
+const letters="abcdefgh";
+let S=null, timer=null;
+
+/* ---------- home ---------- */
+function home(){
+  clearInterval(timer);S=null;app.textContent="";
+  const h=$("div","head");h.append($("div","eyebrow","Nile University · CVL 461 · Smart Cities & Intelligent Systems"),$("h1","","Quiz Lab"),
+    $("p","muted",BANK.length+" multiple-choice questions from the lecture sheets, the Fall 2025 midterm and extra practice. Many have more than one correct answer."));
+  app.append(h);
+
+  const g1=$("div","group");g1.append($("h2","","Practice by lecture"),$("p","muted small","You see the correct answer and a short explanation after each question."));
+  const c1=$("div","cards");
+  for(const k in LEC){const L=LEC[k],qs=BANK.filter(q=>q.lec===k);
+    c1.append(card(L.n,L.t,qs.length+" questions",k,"var("+L.c+")",()=>start({key:k,title:L.n+" · "+L.t,color:"var("+L.c+")",qs,exam:false})))}
+  g1.append(c1);
+  const row=$("div","opt-row");const lb=$("label");const cb=$("input");cb.type="checkbox";cb.id="shuffle";cb.checked=prefs.shuffle;
+  cb.onchange=()=>{prefs.shuffle=cb.checked;store.set(prefs)};lb.append(cb,document.createTextNode("Shuffle question order"));row.append(lb);g1.append(row);
+  app.append(g1);
+
+  const g2=$("div","group");g2.append($("h2","","Midterm practice"),$("p","muted small","Exam mode: no feedback until you finish. A question only counts if you tick exactly the right options."));
+  const c2=$("div","cards");
+  const mt=BANK.filter(q=>q.src==="Midterm 2025");
+  c2.append(card("Past exam","Fall 2025 midterm, Question I","15 questions","mt25","var(--mt)",()=>start({key:"mt25",title:"Fall 2025 midterm · Question I",color:"var(--accent)",qs:mt,exam:true,fixed:true})));
+  c2.append(card("Mock exam","Random mock midterm","20 questions, 4 per lecture","mock","var(--mt)",()=>{
+    let qs=[];for(const k in LEC)qs=qs.concat(shuffle(BANK.filter(q=>q.lec===k)).slice(0,4));
+    start({key:"mock",title:"Mock midterm",color:"var(--accent)",qs:shuffle(qs),exam:true,fixed:true})}));
+  c2.append(card("Everything","All questions in exam mode",BANK.length+" questions","all","var(--mt)",()=>start({key:"all",title:"All questions",color:"var(--accent)",qs:BANK,exam:true})));
+  c2.append(card("Written","Fall 2025 midterm, Question II","5 questions with model answers",null,"var(--mt)",written));
+  g2.append(c2);app.append(g2);
+  app.append($("div","note","Midterm 2025 answers come from the official model answer. Answers for the sheets and extra questions are worked out from the lecture slides, not from an official key, so check anything that looks off with your instructor. Lectures 4 and 7 are not included."));
+  window.scrollTo(0,0);
+}
+function card(tag,name,meta,key,color,fn){
+  const b=$("button","card");b.type="button";b.style.setProperty("--c",color);
+  const m=$("div","meta");m.append($("span","",meta));
+  if(key){const bs=prefs.best[key];m.append($("span","best",bs!=null?"Best "+bs+"%":"Not tried"))}
+  b.append($("span","tag",tag),$("span","name",name),m);b.onclick=fn;return b;
+}
+
+/* ---------- quiz ---------- */
+function start(cfg){
+  const qs=(cfg.fixed||!prefs.shuffle)?cfg.qs.slice():shuffle(cfg.qs);
+  S={...cfg,qs,i:0,ans:qs.map(()=>[]),checked:qs.map(()=>false),t0:Date.now()};
+  render();
+}
+function render(){
+  clearInterval(timer);app.textContent="";
+  const q=S.qs[S.i],L=LEC[q.lec],n=S.qs.length;
+  const bar=$("div","bar");const back=$("button","link","← Home");back.type="button";back.onclick=home;
+  const cnt=$("span","count");bar.append(back,$("span","title",S.title),cnt);app.append(bar);
+  const tick=()=>{const s=Math.floor((Date.now()-S.t0)/1000);cnt.textContent=(S.i+1)+" / "+n+(S.exam?"  ·  "+String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0"):"")};
+  tick();if(S.exam)timer=setInterval(tick,1000);
+  const pr=$("div","prog");pr.style.setProperty("--c",S.color);const pi=$("i");pi.style.width=((S.i+(S.checked[S.i]?1:0))/n*100)+"%";pr.append(pi);app.append(pr);
+
+  const multi=S.exam||q.a.length>1, done=S.checked[S.i];
+  const qc=$("div","qcard");const meta=$("div","qmeta");
+  const lp=$("span","pill lec",L.n);lp.style.setProperty("--c","var("+L.c+")");meta.append(lp,$("span","pill",q.src));
+  if(!S.exam)meta.append($("span","pill",q.a.length>1?"Select all that apply":"One answer"));
+  qc.append(meta,$("div","qtext",q.q));
+  const opts=$("div","opts");opts.setAttribute("role",multi?"group":"radiogroup");
+  q.o.forEach((t,j)=>{
+    const b=$("button","opt"+(multi?"":" round"));b.type="button";b.setAttribute("role",multi?"checkbox":"radio");
+    const sel=S.ans[S.i].includes(j);b.setAttribute("aria-checked",sel);
+    const box=$("span","box",sel?"✓":"");b.append(box,$("span","",letters[j]+")  "+t));
+    if(done){b.disabled=true;const ok=q.a.includes(j);
+      if(sel&&ok){b.classList.add("right");b.append($("span","why","Correct"))}
+      else if(sel&&!ok){b.classList.add("wrong");box.textContent="✕";b.append($("span","why","Wrong"))}
+      else if(ok){b.classList.add("missed");b.append($("span","why","Correct answer"))}
+    }else b.onclick=()=>{let a=S.ans[S.i];
+      if(multi)a=a.includes(j)?a.filter(x=>x!==j):a.concat(j);else a=[j];
+      S.ans[S.i]=a;render()};
+    opts.append(b)});
+  qc.append(opts);
+  if(done){const ok=same(S.ans[S.i],q.a);const fb=$("div","fb "+(ok?"ok":"no"));fb.append($("b","",ok?"Correct":"Not quite"),$("span","",q.e||""));qc.append(fb)}
+  const acts=$("div","acts");
+  const last=S.i===n-1;
+  if(S.exam){
+    const pv=$("button","btn","Previous");pv.type="button";pv.disabled=S.i===0;pv.onclick=()=>{S.i--;render()};
+    const nx=$("button","btn pri",last?"Finish exam":"Next");nx.type="button";nx.onclick=()=>{if(last)finish();else{S.i++;render()}};
+    acts.append(pv,$("span","spacer"),nx);
+  }else if(!done){
+    const ck=$("button","btn pri","Check answer");ck.type="button";ck.disabled=!S.ans[S.i].length;ck.onclick=()=>{S.checked[S.i]=true;render()};
+    const sk=$("button","btn","Skip");sk.type="button";sk.onclick=()=>{S.ans[S.i]=[];S.checked[S.i]=true;render()};
+    acts.append(ck,sk);
+  }else{
+    const nx=$("button","btn pri",last?"See results":"Next question");nx.type="button";nx.onclick=()=>{if(last)finish();else{S.i++;render()}};acts.append(nx);
+  }
+  qc.append(acts);app.append(qc);
+  if(S.exam){const un=S.ans.filter(a=>!a.length).length;app.append($("p","muted small",un?un+" question"+(un>1?"s":"")+" not answered yet.":"All questions answered."))}
+}
+function finish(){
+  clearInterval(timer);const n=S.qs.length;
+  const res=S.qs.map((q,i)=>same(S.ans[i],q.a));const sc=res.filter(Boolean).length,pct=Math.round(sc/n*100);
+  if(!S.retry&&(prefs.best[S.key]==null||pct>prefs.best[S.key])){prefs.best[S.key]=pct;store.set(prefs)}
+  app.textContent="";
+  const bar=$("div","bar");const back=$("button","link","← Home");back.type="button";back.onclick=home;bar.append(back,$("span","title",S.title));app.append(bar);
+  const qc=$("div","qcard");const s=$("div","score");s.append($("span","n",sc+" / "+n),$("span","muted",pct+"% correct"+(S.exam?" · "+Math.round((Date.now()-S.t0)/60000)+" min":"")));
+  qc.append($("div","eyebrow","Result"),s);
+  const lecs=[...new Set(S.qs.map(q=>q.lec))];
+  if(lecs.length>1){const rows=$("div","rows");lecs.sort().forEach(k=>{const idx=S.qs.map((q,i)=>q.lec===k?i:-1).filter(i=>i>=0),c=idx.filter(i=>res[i]).length;
+    const r=$("div","row");const p=$("div","prog");p.style.setProperty("--c","var("+LEC[k].c+")");const pi=$("i");pi.style.width=(c/idx.length*100)+"%";p.append(pi);
+    r.append($("span","",LEC[k].n+" · "+LEC[k].t),p,$("span","v",c+" / "+idx.length));rows.append(r)});qc.append(rows)}
+  const acts=$("div","acts");const wrong=S.qs.filter((q,i)=>!res[i]);
+  if(wrong.length){const rw=$("button","btn pri","Retry the "+wrong.length+" I got wrong");rw.type="button";rw.onclick=()=>start({key:S.key,title:S.title,color:S.color,qs:wrong,exam:false,retry:true});acts.append(rw)}
+  const hm=$("button","btn","Back to home");hm.type="button";hm.onclick=home;acts.append(hm);qc.append(acts);app.append(qc);
+  const g=$("div","group");g.append($("h2","",wrong.length?"Review":"Review · all correct"));
+  S.qs.forEach((q,i)=>{if(res[i]&&!S.exam)return;
+    const r=$("div","rev"+(res[i]?" ok":""));r.append($("div","q",(i+1)+". "+q.q));
+    const fmt=a=>a.length?a.slice().sort().map(j=>letters[j]+") "+q.o[j]).join("  ·  "):"No answer";
+    if(!res[i]){const y=$("div","y");y.append($("b","","Your answer: "),document.createTextNode(fmt(S.ans[i])));r.append(y)}
+    const a=$("div","a");a.append($("b","","Correct: "),document.createTextNode(fmt(q.a)));r.append(a);
+    if(q.e)r.append($("div","muted small",q.e));g.append(r)});
+  app.append(g);window.scrollTo(0,0);
+}
+function written(){
+  clearInterval(timer);app.textContent="";
+  const bar=$("div","bar");const back=$("button","link","← Home");back.type="button";back.onclick=home;bar.append(back,$("span","title","Fall 2025 midterm · Question II"));app.append(bar);
+  app.append($("p","muted","Write or say your answer first, then open the model answer to compare. Question II was worth 5 of the 20 points."));
+  WRITTEN.forEach((w,i)=>{const d=$("details");const s=$("summary","",(i+1)+". "+w[0]);s.append($("span","hint","Show model answer"));d.append(s,$("div","ans",w[1]));app.append(d)});
+  window.scrollTo(0,0);
+}
+home();
+</script>
+
+</body></html>
